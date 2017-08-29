@@ -1,3 +1,4 @@
+#include "imgui_menu.h"
 #include <igl/viewer/Viewer.h>
 
 int main(int argc, char *argv[])
@@ -28,6 +29,9 @@ int main(int argc, char *argv[])
 
   // Plot the mesh
   igl::viewer::Viewer viewer;
+  ImGuiMenuBase menu;
+  viewer.core.is_animating = true;
+  viewer.plugins.push_back(&menu);
   viewer.data.set_mesh(V, F);
   viewer.data.set_face_based(true);
   viewer.launch();
