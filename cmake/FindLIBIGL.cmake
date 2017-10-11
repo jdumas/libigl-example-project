@@ -3,10 +3,13 @@
 #
 #  LIBIGL_FOUND - system has LIBIGL
 #  LIBIGL_INCLUDE_DIR - **the** LIBIGL include directory
-#  LIBIGL_INCLUDE_DIRS - LIBIGL include directories
-#  LIBIGL_SOURCES - the LIBIGL source files
 if(LIBIGL_FOUND)
     return()
+endif()
+
+if(LIBIGL_WITH_EMSCRIPTEN)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
 endif()
 
 find_path(LIBIGL_INCLUDE_DIR igl/readOBJ.h
@@ -15,13 +18,13 @@ find_path(LIBIGL_INCLUDE_DIR igl/readOBJ.h
         # ENV LIBIGLROOT
         # ENV LIBIGL_ROOT
         # ENV LIBIGL_DIR
-    PATHS
         ${CMAKE_SOURCE_DIR}/../..
         ${CMAKE_SOURCE_DIR}/..
         ${CMAKE_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/libigl
         ${CMAKE_SOURCE_DIR}/../libigl
         ${CMAKE_SOURCE_DIR}/../../libigl
+    PATHS
         /usr
         /usr/local
         /usr/local/igl/libigl
@@ -36,3 +39,8 @@ mark_as_advanced(LIBIGL_INCLUDE_DIR)
 
 list(APPEND CMAKE_MODULE_PATH "${LIBIGL_INCLUDE_DIR}/../shared/cmake")
 include(libigl)
+
+if(LIBIGL_WITH_EMSCRIPTEN)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+endif()
