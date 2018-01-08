@@ -3,8 +3,6 @@
 #
 #  LIBIGL_FOUND - system has LIBIGL
 #  LIBIGL_INCLUDE_DIR - **the** LIBIGL include directory
-#  LIBIGL_INCLUDE_DIRS - LIBIGL include directories
-#  LIBIGL_SOURCES - the LIBIGL source files
 if(LIBIGL_FOUND)
     return()
 endif()
@@ -19,6 +17,7 @@ find_path(LIBIGL_INCLUDE_DIR igl/readOBJ.h
         ${CMAKE_SOURCE_DIR}/../..
         ${CMAKE_SOURCE_DIR}/..
         ${CMAKE_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/libigl
         ${CMAKE_SOURCE_DIR}/../libigl
         ${CMAKE_SOURCE_DIR}/../../libigl
         /usr
@@ -33,6 +32,5 @@ find_package_handle_standard_args(LIBIGL
     LIBIGL_INCLUDE_DIR)
 mark_as_advanced(LIBIGL_INCLUDE_DIR)
 
-# Should be replaced by a single `include(${LIBIGL_INCLUDE_DIR}/../cmake/libigl.cmake)`
-set(LIBIGL_ROOT ${LIBIGL_INCLUDE_DIR}/..)
+list(APPEND CMAKE_MODULE_PATH "${LIBIGL_INCLUDE_DIR}/../shared/cmake")
 include(libigl)

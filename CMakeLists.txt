@@ -13,4 +13,7 @@ find_package(LIBIGL REQUIRED QUIET)
 # Add your project files
 file(GLOB SRCFILES *.cpp)
 add_executable(${PROJECT_NAME}_bin ${SRCFILES})
-target_link_libraries(${PROJECT_NAME}_bin igl::core igl::viewer)
+target_link_libraries(${PROJECT_NAME}_bin igl::core igl::viewer igl::png)
+
+set(TUTORIAL_SHARED_PATH "${LIBIGL_INCLUDE_DIR}/../tutorial/shared")
+target_compile_definitions(${PROJECT_NAME}_bin PRIVATE -DTUTORIAL_SHARED_PATH=\"${TUTORIAL_SHARED_PATH}\")
