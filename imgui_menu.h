@@ -7,11 +7,16 @@
 #include <imgui/imgui.h>
 #include <imgui_impl_glfw_gl3.h>
 #include <GLFW/glfw3.h>
+#include <imgui_fonts_droid_sans.h>
 ////////////////////////////////////////////////////////////////////////////////
 
 class ImGuiMenuBase : public igl::viewer::ViewerPlugin {
 protected:
-	// Text rendering
+	// Hidpi scaling to be used for text rendering.
+	float m_HidpiScaling;
+
+	// Ratio between the framebuffer size and the window size.
+	// May be different from the hipdi scaling!
 	float m_PixelRatio;
 
 public:
@@ -19,7 +24,13 @@ public:
 		ViewerPlugin::init(_viewer);
 		// Setup ImGui binding
 		if (_viewer) {
+			m_HidpiScaling = hidpi_scaling();
+			m_PixelRatio = pixel_ratio();
 			ImGui_ImplGlfwGL3_Init(_viewer->window, false);
+			ImGuiIO& io = ImGui::GetIO();
+			io.IniFilename = nullptr;
+			io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
+				droid_sans_compressed_size, 13 * m_HidpiScaling);
 		}
 	}
 
@@ -30,6 +41,18 @@ public:
 
 	virtual bool pre_draw() override {
 		glfwPollEvents();
+
+		// Check whether window dpi has changed
+		float scaling = hidpi_scaling();
+		if (std::abs(scaling - m_HidpiScaling) > 1e-5) {
+			m_HidpiScaling = scaling;
+			ImGuiIO& io = ImGui::GetIO();
+			io.Fonts->Clear();
+			io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
+				droid_sans_compressed_size, 13 * m_HidpiScaling);
+			// io.Fonts->AddFontFromFileTTF(path.c_str(), 13 * m_HidpiScaling);
+		}
+
 		ImGui_ImplGlfwGL3_NewFrame();
 		return false;
 	}
@@ -82,12 +105,13 @@ public:
 
 	// Draw menu
 	virtual void draw_menu() {
-		float min_width = 200.f;
 
 		// Text labels
+		m_PixelRatio = pixel_ratio();
 		draw_labels_menu();
 
 		// Viewer settings
+		float min_width = 200.f * m_HidpiScaling;
 		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSizeConstraints(ImVec2(min_width, -1.0f), ImVec2(min_width, -1.0f));
@@ -194,18 +218,6 @@ public:
 	}
 
 	void draw_labels_menu() {
-		// Calculate pixel ratio for hi-dpi devices
-		{
-			Eigen::Vector2i mFBSize;
-			Eigen::Vector2i mSize;
-			GLFWwindow* mGLFWWindow = glfwGetCurrentContext();
-			glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
-			glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
-			glViewport(0,0, mFBSize[0], mFBSize[1]);
-			glClear(GL_STENCIL_BUFFER_BIT);
-			m_PixelRatio = (float) mFBSize[0] / (float) mSize[0];
-		}
-
 		// Text labels
 		ImGui::SetNextWindowPos(ImVec2(0,0), ImGuiSetCond_Always);
 		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiSetCond_Always);
@@ -266,5 +278,57 @@ public:
 
 		//ImGui::SetCursorScreenPos(ImVec2(64, 64));
 		//ImGui::TextColored(ImVec4(0,0,255,128), "barbar");
+	}
+
+	float pixel_ratio() {
+		int buf_size[2];
+		int win_size[2];
+		GLFWwindow* window = glfwGetCurrentContext();
+		glfwGetFramebufferSize(window, &buf_size[0], &buf_size[1]);
+		glfwGetWindowSize(window, &win_size[0], &win_size[1]);
+		return (float) buf_size[0] / (float) win_size[0];
+	}
+
+	float hidpi_scaling() {
+		// Computes pixel ratio for hi-dpi devices
+		float xscale, yscale;
+		GLFWwindow* window = glfwGetCurrentContext();
+		glfwGetWindowContentScale(window, &xscale, &yscale);
+		return 0.5 * (xscale + yscale);
+
+		// Eigen::Vector2i mFBSize;
+		// Eigen::Vector2i mSize;
+		// GLFWwindow* mGLFWWindow = glfwGetCurrentContext();
+		// glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
+		// glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
+		// glViewport(0,0, mFBSize[0], mFBSize[1]);
+		// glClear(GL_STENCIL_BUFFER_BIT);
+		// m_PixelRatio = (float) mFBSize[0] / (float) mSize[0];
+
+		// if (!verbose) { return; }
+		// std::cout << mFBSize.transpose() << std::endl;
+		// std::cout << mSize.transpose() << std::endl;
+
+		// float xscale, yscale;
+		// glfwGetWindowContentScale(mGLFWWindow, &xscale, &yscale);
+		// std::cout << xscale << ' ' << yscale << std::endl;
+
+		// GLFWmonitor* primary = glfwGetPrimaryMonitor();
+		// int count;
+		// GLFWmonitor** monitors = glfwGetMonitors(&count);
+
+		// for (int i = 0; i < count; ++i) {
+		// 	const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+
+		// 	int widthMM, heightMM;
+		// 	glfwGetMonitorPhysicalSize(monitors[i], &widthMM, &heightMM);
+
+		// 	const double dpi = mode->width / (widthMM / 25.4);
+		// 	if (primary == monitors[i]) {
+		// 		std::cout << "*";
+		// 	}
+		// 	std::cout << dpi << std::endl;
+		// }
+		// std::cout << std::endl;
 	}
 };

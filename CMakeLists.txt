@@ -4,6 +4,15 @@ project(example)
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+# GLFW3
+if(NOT TARGET glfw)
+	set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL " " FORCE)
+	set(GLFW_BUILD_TESTS OFF CACHE BOOL " " FORCE)
+	set(GLFW_BUILD_DOCS OFF CACHE BOOL " " FORCE)
+	set(GLFW_INSTALL OFF CACHE BOOL " " FORCE)
+	add_subdirectory("${THIRD_PARTY_DIR}/glfw" glfw)
+endif()
+
 # libigl
 option(LIBIGL_USE_STATIC_LIBRARY "Use libigl as static library" OFF)
 option(LIBIGL_WITH_ANTTWEAKBAR      "Use AntTweakBar"    OFF)
@@ -32,6 +41,5 @@ if(NOT TARGET imgui)
 endif()
 
 # Add your project files
-file(GLOB SRCFILES *.cpp)
-add_executable(${PROJECT_NAME}_bin ${SRCFILES})
+add_executable(${PROJECT_NAME}_bin main.cpp imgui_menu.h)
 target_link_libraries(${PROJECT_NAME}_bin igl::core igl::viewer imgui)
