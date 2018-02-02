@@ -31,6 +31,8 @@ public:
 			io.IniFilename = nullptr;
 			io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
 				droid_sans_compressed_size, 13 * m_HidpiScaling);
+
+			io.FontGlobalScale = 1.0 / m_PixelRatio;
 		}
 	}
 
@@ -45,11 +47,15 @@ public:
 		// Check whether window dpi has changed
 		float scaling = hidpi_scaling();
 		if (std::abs(scaling - m_HidpiScaling) > 1e-5) {
-			m_HidpiScaling = scaling;
+			m_HidpiScaling = hidpi_scaling();
+			m_PixelRatio = pixel_ratio();
+
 			ImGuiIO& io = ImGui::GetIO();
 			io.Fonts->Clear();
 			io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
 				droid_sans_compressed_size, 13 * m_HidpiScaling);
+			io.FontGlobalScale = 1.0 / m_PixelRatio;
+			ImGui_ImplGlfwGL3_InvalidateDeviceObjects();
 			// io.Fonts->AddFontFromFileTTF(path.c_str(), 13 * m_HidpiScaling);
 		}
 
@@ -111,7 +117,7 @@ public:
 		draw_labels_menu();
 
 		// Viewer settings
-		float min_width = 200.f * m_HidpiScaling;
+		float min_width = 200.f * m_HidpiScaling / m_PixelRatio;
 		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
 		ImGui::SetNextWindowSizeConstraints(ImVec2(min_width, -1.0f), ImVec2(min_width, -1.0f));
@@ -271,7 +277,7 @@ public:
 			view_matrix, viewer->core.proj, viewer->core.viewport);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		drawList->AddText(ImGui::GetFont(), ImGui::GetFontSize()*m_PixelRatio,
+		drawList->AddText(ImGui::GetFont(), ImGui::GetFontSize()*1.2,
 				ImVec2(coord[0]/m_PixelRatio, (viewer->core.viewport[3] - coord[1])/m_PixelRatio),
 				ImGui::GetColorU32(ImVec4(0, 0, 10, 255)),
 				&text[0], &text[0] + text.size());
