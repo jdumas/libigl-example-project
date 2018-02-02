@@ -295,40 +295,5 @@ public:
 		GLFWwindow* window = glfwGetCurrentContext();
 		glfwGetWindowContentScale(window, &xscale, &yscale);
 		return 0.5 * (xscale + yscale);
-
-		// Eigen::Vector2i mFBSize;
-		// Eigen::Vector2i mSize;
-		// GLFWwindow* mGLFWWindow = glfwGetCurrentContext();
-		// glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
-		// glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
-		// glViewport(0,0, mFBSize[0], mFBSize[1]);
-		// glClear(GL_STENCIL_BUFFER_BIT);
-		// m_PixelRatio = (float) mFBSize[0] / (float) mSize[0];
-
-		// if (!verbose) { return; }
-		// std::cout << mFBSize.transpose() << std::endl;
-		// std::cout << mSize.transpose() << std::endl;
-
-		// float xscale, yscale;
-		// glfwGetWindowContentScale(mGLFWWindow, &xscale, &yscale);
-		// std::cout << xscale << ' ' << yscale << std::endl;
-
-		// GLFWmonitor* primary = glfwGetPrimaryMonitor();
-		// int count;
-		// GLFWmonitor** monitors = glfwGetMonitors(&count);
-
-		// for (int i = 0; i < count; ++i) {
-		// 	const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
-
-		// 	int widthMM, heightMM;
-		// 	glfwGetMonitorPhysicalSize(monitors[i], &widthMM, &heightMM);
-
-		// 	const double dpi = mode->width / (widthMM / 25.4);
-		// 	if (primary == monitors[i]) {
-		// 		std::cout << "*";
-		// 	}
-		// 	std::cout << dpi << std::endl;
-		// }
-		// std::cout << std::endl;
 	}
 };
