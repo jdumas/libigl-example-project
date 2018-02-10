@@ -14,7 +14,7 @@ if(NOT TARGET glfw)
 endif()
 
 # libigl
-option(LIBIGL_USE_STATIC_LIBRARY "Use libigl as static library" OFF)
+option(LIBIGL_USE_STATIC_LIBRARY "Use libigl as static library" ON)
 option(LIBIGL_WITH_ANTTWEAKBAR      "Use AntTweakBar"    OFF)
 option(LIBIGL_WITH_CGAL             "Use CGAL"           OFF)
 option(LIBIGL_WITH_COMISO           "Use CoMiso"         OFF)
@@ -41,5 +41,8 @@ if(NOT TARGET imgui)
 endif()
 
 # Add your project files
-add_executable(${PROJECT_NAME}_bin main.cpp imgui_menu.h)
+add_executable(${PROJECT_NAME}_bin main.cpp)
+if(${LIBIGL_USE_STATIC_LIBRARY})
+	target_sources(${PROJECT_NAME}_bin PRIVATE imgui/ImGuiMenu.cpp)
+endif()
 target_link_libraries(${PROJECT_NAME}_bin igl::core igl::viewer imgui)
