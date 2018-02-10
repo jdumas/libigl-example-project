@@ -19,6 +19,8 @@ IGL_INLINE void ImGuiMenu::init(igl::viewer::Viewer *_viewer) {
 		// ImGui::StyleColorsClassic();
 		ImGui::StyleColorsDark();
 		// ImGui::StyleColorsLight();
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.FrameRounding = 5.0f;
 		reload_font();
 	}
 }
@@ -134,7 +136,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu() {
 		ImGui::Columns(1);
 	}
 
-	// IO
+	// Mesh
 	if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::Columns(2, nullptr, false);
 		if (ImGui::Button("Load##Mesh", ImVec2(-1, 0))) {
