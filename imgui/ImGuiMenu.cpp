@@ -14,7 +14,10 @@ IGL_INLINE void ImGuiMenu::init(igl::viewer::Viewer *_viewer) {
 	ViewerPlugin::init(_viewer);
 	// Setup ImGui binding
 	if (_viewer) {
-		ImGui_ImplGlfwGL3_Init(_viewer->window, false);
+		if (m_Context == nullptr) {
+			m_Context = ImGui::CreateContext();
+		}
+		ImGui_ImplGlfwGL3_Init(viewer->window, false);
 		ImGui::GetIO().IniFilename = nullptr;
 		// ImGui::StyleColorsClassic();
 		ImGui::StyleColorsDark();
@@ -39,6 +42,8 @@ IGL_INLINE void ImGuiMenu::reload_font(int font_size) {
 IGL_INLINE void ImGuiMenu::shutdown() {
 	// Cleanup
 	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext(m_Context);
+	m_Context = nullptr;
 }
 
 IGL_INLINE bool ImGuiMenu::pre_draw() {
@@ -62,13 +67,15 @@ IGL_INLINE bool ImGuiMenu::post_draw() {
 }
 
 IGL_INLINE void ImGuiMenu::post_resize(int width, int height) {
-	ImGui::GetIO().DisplaySize.x = float(width);
-	ImGui::GetIO().DisplaySize.y = float(height);
+	if (m_Context) {
+		ImGui::GetIO().DisplaySize.x = float(width);
+		ImGui::GetIO().DisplaySize.y = float(height);
+	}
 }
 
 // Mouse IO
 IGL_INLINE bool ImGuiMenu::mouse_down(int button, int modifier) {
-	ImGui_ImplGlfwGL3_MouseButtonPressedCallback(button, modifier);
+	ImGui_ImplGlfwGL3_MouseButtonCallback(viewer->window, button, GLFW_PRESS, modifier);
 	return ImGui::GetIO().WantCaptureMouse;
 }
 
@@ -81,23 +88,23 @@ IGL_INLINE bool ImGuiMenu::mouse_move(int mouse_x, int mouse_y) {
 }
 
 IGL_INLINE bool ImGuiMenu::mouse_scroll(float delta_y) {
-	ImGui_ImplGlfwGL3_ScrollCallback(delta_y);
+	ImGui_ImplGlfwGL3_ScrollCallback(viewer->window, 0.f, delta_y);
 	return ImGui::GetIO().WantCaptureMouse;
 }
 
 // Keyboard IO
 IGL_INLINE bool ImGuiMenu::key_pressed(unsigned int key, int modifiers) {
-	ImGui_ImplGlfwGL3_CharCallback(key);
+	ImGui_ImplGlfwGL3_CharCallback(nullptr, key);
 	return ImGui::GetIO().WantCaptureKeyboard;
 }
 
 IGL_INLINE bool ImGuiMenu::key_down(int key, int modifiers) {
-	ImGui_ImplGlfwGL3_KeyCallback(key, GLFW_PRESS, modifiers);
+	ImGui_ImplGlfwGL3_KeyCallback(viewer->window, key, 0, GLFW_PRESS, modifiers);
 	return ImGui::GetIO().WantCaptureKeyboard;
 }
 
 IGL_INLINE bool ImGuiMenu::key_up(int key, int modifiers) {
-	ImGui_ImplGlfwGL3_KeyCallback(key, GLFW_RELEASE, modifiers);
+	ImGui_ImplGlfwGL3_KeyCallback(viewer->window, key, 0, GLFW_RELEASE, modifiers);
 	return ImGui::GetIO().WantCaptureKeyboard;
 }
 

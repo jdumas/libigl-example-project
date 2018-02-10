@@ -13,13 +13,13 @@ static auto vector_getter = [](void* vec, int idx, const char** out_text) {
 	return true;
 };
 
-bool Combo(const char* label, int* idx, std::vector<std::string>& values) {
+inline bool Combo(const char* label, int* idx, std::vector<std::string>& values) {
 	if (values.empty()) { return false; }
 	return Combo(label, idx, vector_getter,
 		static_cast<void*>(&values), values.size());
 }
 
-bool ListBox(const char* label, int* idx, std::vector<std::string>& values) {
+inline bool ListBox(const char* label, int* idx, std::vector<std::string>& values) {
 	if (values.empty()) { return false; }
 	return ListBox(label, idx, vector_getter,
 		static_cast<void*>(&values), values.size());

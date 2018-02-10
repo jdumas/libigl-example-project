@@ -6,6 +6,9 @@
 #include <igl/igl_inline.h>
 ////////////////////////////////////////////////////////////////////////////////
 
+// Forward declarations
+struct ImGuiContext;
+
 class ImGuiMenu : public igl::viewer::ViewerPlugin {
 protected:
 	// Hidpi scaling to be used for text rendering.
@@ -14,6 +17,9 @@ protected:
 	// Ratio between the framebuffer size and the window size.
 	// May be different from the hipdi scaling!
 	float m_PixelRatio;
+
+	// ImGui Context
+	ImGuiContext * m_Context = nullptr;
 
 public:
 	IGL_INLINE virtual void init(igl::viewer::Viewer *_viewer) override;
