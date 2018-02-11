@@ -32,22 +32,23 @@ int main(int argc, char *argv[])
 
   // Plot the mesh
   igl::opengl::glfw::Viewer viewer;
-  viewer.load_mesh_from_file(std::string("/home/jdumas/external/git/libigl/tutorial/shared") + "/" + "bunny.off");
+  viewer.load_mesh_from_file(std::string("/home/jdumas/external/git/libigl/tutorial/shared") + "/" + "bunny_unit.off");
   viewer.data().set_mesh(V, F);
   viewer.data().set_face_based(true);
 
   // Custom menu
   SlicingPlugin menu;
   viewer.plugins.push_back(&menu);
-  menu.draw_viewer_menu_func = [&]() {
-    menu.draw_viewer_menu();
+  // menu.draw_viewer_menu_func = [&]() {
+  //   menu.draw_viewer_menu();
 
-    static Eigen::Matrix4f matrix = Eigen::Matrix4f::Identity();
-    Eigen::Matrix4f view = viewer.core.view * viewer.core.model;
-    Eigen::Matrix4f proj = viewer.core.proj;
-    // ImGuizmo::DrawCube(view.data(), proj.data(), matrix.data());
-    ImGuizmo::EditTransform(view.data(), proj.data(), matrix.data());
-  };
+  //   static Eigen::Matrix4f matrix = Eigen::Matrix4f::Identity();
+  //   Eigen::Matrix4f view = viewer.core.view * viewer.core.model;
+  //   Eigen::Matrix4f proj = viewer.core.proj;
+  //   // ImGuizmo::DrawCube(view.data(), proj.data(), matrix.data());
+  //   ImGuizmo::EditTransform(view.data(), proj.data(), matrix.data());
+  // };
 
+  viewer.resize(1024, 1024);
   viewer.launch();
 }

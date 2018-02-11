@@ -1,3 +1,4 @@
+#pragma once
 ////////////////////////////////////////////////////////////////////////////////
 #include "imguizmo/ImGuizmo.h"
 #include <imgui/imgui.h>
@@ -46,21 +47,21 @@ void EditTransform(const float *cameraView, float *cameraProjection, float* matr
 	}
 	// if (ImGui::IsKeyPressed(83))
 	// 	useSnap = !useSnap;
-	ImGui::Checkbox("##Snap", &useSnap);
-	ImGui::SameLine();
+	// ImGui::Checkbox("##Snap", &useSnap);
+	// ImGui::SameLine();
 
-	switch (mCurrentGizmoOperation)
-	{
-	case ImGuizmo::TRANSLATE:
-		ImGui::InputFloat3("Snap", &snap[0]);
-		break;
-	case ImGuizmo::ROTATE:
-		ImGui::InputFloat("Angle Snap", &snap[0]);
-		break;
-	case ImGuizmo::SCALE:
-		ImGui::InputFloat("Scale Snap", &snap[0]);
-		break;
-	}
+	// switch (mCurrentGizmoOperation)
+	// {
+	// case ImGuizmo::TRANSLATE:
+	// 	ImGui::InputFloat3("Snap", &snap[0]);
+	// 	break;
+	// case ImGuizmo::ROTATE:
+	// 	ImGui::InputFloat("Angle Snap", &snap[0]);
+	// 	break;
+	// case ImGuizmo::SCALE:
+	// 	ImGui::InputFloat("Scale Snap", &snap[0]);
+	// 	break;
+	// }
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
