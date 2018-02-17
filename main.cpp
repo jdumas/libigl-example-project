@@ -32,7 +32,10 @@ int main(int argc, char *argv[])
 
   // Plot the mesh
   igl::opengl::glfw::Viewer viewer;
-  viewer.load_mesh_from_file(std::string("/home/jdumas/external/git/libigl/tutorial/shared") + "/" + "bunny_unit.off");
+  std::string path = "/home/jdumas/external/git/libigl/tutorial/shared/";
+  // path += "bunny_unit.off";
+  path += "bunny.off";
+  viewer.load_mesh_from_file(path);
   viewer.data().set_mesh(V, F);
   viewer.data().set_face_based(true);
 

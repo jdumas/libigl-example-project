@@ -45,16 +45,24 @@ class SlicingPlugin : public igl::opengl::glfw::imgui::ImGuiMenu {
 
 	virtual void draw_custom_window() override {
 		static Eigen::Matrix4f matrix = Eigen::Matrix4f::Identity();
-		Eigen::Matrix4f view = viewer->core.view * viewer->core.model;
+		Eigen::Affine3f rescale = Eigen::Scaling(0.5f * viewer->core.camera_base_zoom)
+			* Eigen::Translation3f(viewer->core.camera_base_translation);
+		Eigen::Affine3f view = Eigen::Affine3f(viewer->core.view) * rescale.inverse();
 		Eigen::Matrix4f proj = viewer->core.proj;
-		ImGuizmo::EditTransform(view.data(), proj.data(), matrix.data());
+
+		ImGuizmo::EditTransform(view.matrix().data(), proj.data(), matrix.data());
+
+		Eigen::Affine3f model(matrix);
+		model = rescale.inverse() * model;
+		// std::cout << viewer->core.camera_base_zoom << std::endl;
+		// std::cout << viewer->core.camera_base_translation.transpose() << std::endl;
 
 		Eigen::MatrixXd V = (Eigen::MatrixXd(4, 3) <<
 			-0.5, -0.5, 0.0,
 			-0.5,  0.5, 0.0,
 			 0.5,  0.5, 0.0,
 			 0.5, -0.5, 0.0).finished();
-		V = (V.rowwise().homogeneous() * matrix.cast<double>().transpose()).rowwise().hnormalized();
+		V = (V.rowwise().homogeneous() * model.matrix().cast<double>().transpose()).rowwise().hnormalized();
 
 		const Eigen::MatrixXi F = (Eigen::MatrixXi(2, 3) <<
 			0, 2, 1,
